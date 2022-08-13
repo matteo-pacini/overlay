@@ -1,0 +1,12 @@
+DEFINED_PHASES=install
+DESCRIPTION=A fancy custom distribution of Valves Proton with various patches
+EAPI=8
+HOMEPAGE=https://github.com/GloriousEggroll/proton-ge-custom
+IUSE=kde gnome
+KEYWORDS=~amd64
+LICENSE=BSD
+RDEPEND=media-libs/mesa[vulkan,abi_x86_32] media-libs/vulkan-loader[abi_x86_32] dev-lang/python-exec media-libs/vulkan-loader[abi_x86_32] virtual/libusb[abi_x86_32] media-libs/openal[abi_x86_32] x11-libs/libva[abi_x86_32] media-video/ffmpeg media-libs/speex[abi_x86_32] media-libs/libtheora[abi_x86_32] x11-libs/libvdpau[abi_x86_32] media-libs/gst-plugins-bad[abi_x86_32] media-libs/gst-plugins-base[abi_x86_32] media-libs/libjpeg-turbo[abi_x86_32] dev-libs/libgudev[abi_x86_32] media-libs/flac[abi_x86_32] media-sound/mpg123[abi_x86_32] kde? ( kde-apps/kdialog ) gnome? ( gnome-extra/zenity ) app-emulation/winetricks virtual/wine[abi_x86_32] games-util/steam-launcher
+RESTRICT=mirror strip
+SLOT=7.29
+SRC_URI=https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton7-29/GE-Proton7-29.tar.gz -> proton-ge-custom-7.29.tar.gz
+_md5_=9b72e0801d697111964da11d91ffce42
