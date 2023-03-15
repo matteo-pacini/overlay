@@ -31,10 +31,8 @@ Follow these steps to add the Zi0P4tch0 Gentoo overlay to your system:
 1. Add the repository using `eselect-repository`:
 
 ```sh
-sudo eselect repository add zi0p4tch0 git https://github.com/<your-username>/zi0p4tch0.git
+sudo eselect repository add zi0p4tch0 git https://github.com/Zi0P4tch0/overlay.git
 ```
-
-Replace `<your-username>` with your actual GitHub username.
 
 2. Sync the repository:
 
