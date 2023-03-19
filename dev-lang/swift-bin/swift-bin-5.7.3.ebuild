@@ -25,7 +25,7 @@ DEPEND="${PYTHON_DEPS}
 		"
 RDEPEND="${DEPEND}
 		repl? ( !!dev-util/lldb )
-		dev-lang/python:3
+		dev-lang/python:3.11.2_p2
 		sys-devel/lld
 		icu? ( dev-libs/icu-layoutex )
 		dev-util/systemtap
