@@ -16,34 +16,32 @@ LICENSE=""
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-REQUIRED_USE="clang? ( !repl )"
-IUSE="repl icu clang"
+REQUIRED_USE=""
+IUSE="repl icu"
 RESTRICT="repl? ( strip )"
 
 DEPEND="${PYTHON_DEPS}
-		!!sys-devel/clang:10
 		!!dev-lang/swift
 		"
 RDEPEND="${DEPEND}
-		clang? ( sys-devel/clang:13 )
 		repl? ( !!dev-util/lldb )
-		dev-lang/python:3.7
+		dev-lang/python:3
 		sys-devel/lld
 		icu? ( dev-libs/icu-layoutex )
 		dev-util/systemtap
 		"
 
 src_install() {
-	ZIPDIR=swift-${PV}-RELEASE-amazonlinux2
-	if ! use clang; then
-		dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clang-10
-		dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clangd
+	
+    ZIPDIR=swift-${PV}-RELEASE-amazonlinux2
 
-		dosym clang-10 /usr/bin/clang
-		dosym clang /usr/bin/clang++
-		dosym clang /usr/bin/clang-cl
-		dosym clang /usr/bin/clang-cpp
-	fi
+	dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clang-13
+	dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clangd
+
+	dosym clang-10 /usr/bin/clang
+	dosym clang /usr/bin/clang++
+	dosym clang /usr/bin/clang-cl
+	dosym clang /usr/bin/clang-cpp
 
 	if use repl; then
 		dobin ${WORKDIR}/${ZIPDIR}/usr/bin/lldb
@@ -77,47 +75,36 @@ src_install() {
 
 	doheader -r ${WORKDIR}/${ZIPDIR}/usr/include
 
-	dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/libIndexStore.so.10git
+	dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/libIndexStore.so.13git
 	dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/libsourcekitdInProc.so
 	dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/libswiftDemangle.so
 	
     if use repl; then
-		dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/liblldb.so.10.0.0git
+		dolib.so ${WORKDIR}/${ZIPDIR}/usr/lib/liblldb.so.13.0.0git
 	fi
 
 	insinto /usr/lib
 	doins -r ${WORKDIR}/${ZIPDIR}/usr/lib/swift
 	doins -r ${WORKDIR}/${ZIPDIR}/usr/lib/swift_static
 
-	dosym libIndexStore.so.10git /usr/lib64/libIndexStore.so
+	dosym libIndexStore.so.13git /usr/lib64/libIndexStore.so
 	if use repl; then
-		dosym liblldb.so.10.0.0git /usr/lib64/liblldb.so.10git
-		dosym liblldb.so.10git /usr/lib64/liblldb.so
+		dosym liblldb.so.13.0.0git /usr/lib64/liblldb.so.13git
+		dosym liblldb.so.13git /usr/lib64/liblldb.so
 	fi
 
 	dosym ../lib64/libIndexStore.so /usr/lib/libIndexStore.so
-	dosym ../lib64/libIndexStore.so.10git /usr/lib/libIndexStore.so.10git
+	dosym ../lib64/libIndexStore.so.13git /usr/lib/libIndexStore.so.13git
 	if use repl; then
 		dosym ../lib64/liblldb.so /usr/lib/liblldb.so
-		dosym ../lib64/liblldb.so.10.0.0git /usr/lib/liblldb.so.10.0.0git
-		dosym ../lib64/liblldb.so.10git /usr/lib/liblldb.so.10git
+		dosym ../lib64/liblldb.so.13.0.0git /usr/lib/liblldb.so.13.0.0git
+		dosym ../lib64/liblldb.so.13git /usr/lib/liblldb.so.13git
 	fi
 	dosym ../lib64/libsourcekitdInProc.so /usr/lib/libsourcekitdInProc.so
 	dosym ../lib64/libswiftDemangle.so /usr/lib/libswiftDemangle.so
 
-	if use clang; then
-		# We need to fix symlink path to clang
-		CLANG_VERSION=`clang --version | grep "clang version"`
-		CLANG_VERSION_TOKEN=($CLANG_VERSION)
-		dosym ../../lib/clang/${CLANG_VERSION_TOKEN[2]} /usr/lib64/swift/clang
-		dosym ../../lib/clang/${CLANG_VERSION_TOKEN[2]} /usr/lib64/swift_static/clang
-		# Hard coded to 13 for now
-		dosym ../lib/llvm/13/bin/clang /usr/bin/clang
-	else
-		# Or use use Apple's built in Clang 10.0.0
-		insinto /usr/lib/clang/
-		doins -r ${WORKDIR}/${ZIPDIR}/usr/lib/clang/10.0.0
-	fi
+	insinto /usr/lib/clang/
+	doins -r ${WORKDIR}/${ZIPDIR}/usr/lib/clang/13.0.0
 
 	insinto /usr/local
 	doins -r ${WORKDIR}/${ZIPDIR}/usr/local/include
