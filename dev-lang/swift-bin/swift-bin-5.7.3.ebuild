@@ -38,7 +38,7 @@ src_install() {
 	dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clang-13
 	dobin ${WORKDIR}/${ZIPDIR}/usr/bin/clangd
 
-	dosym clang-10 /usr/bin/clang
+	dosym clang-13 /usr/bin/clang
 	dosym clang /usr/bin/clang++
 	dosym clang /usr/bin/clang-cl
 	dosym clang /usr/bin/clang-cpp
