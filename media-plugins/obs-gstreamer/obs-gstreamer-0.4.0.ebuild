@@ -28,5 +28,5 @@ BDEPEND="virtual/pkgconfig"
 
 src_prepare() {
 	default
-	sed -i -e "s:lib/obs-plugins:$(get_libdir)/obs-plugins:" meson.build || die
+	sed -i "s:~/.config/obs-studio/plugins/obs-gstreamer/bin/64bit:$(get_libdir)/obs-plugins:" meson.build || die
 }
