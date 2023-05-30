@@ -26,7 +26,11 @@ RDEPEND="media-video/obs-studio
 DEPEND="${RDEPEND}"
 BDEPEND="virtual/pkgconfig"
 
-src_prepare() {
-	default
-	sed -i "s:~/.config/obs-studio/plugins/obs-gstreamer/bin/64bit:$(get_libdir)/obs-plugins:" meson.build || die
+src_configure() {
+	# emason args with changed installdir
+	local emesonargs=(
+		--prefix="/usr/$(get_libdir)/obs-plugins"
+		--libdir=""
+	)
+	meson_src_configure
 }
