@@ -1,9 +1,9 @@
 # Copyright 2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{6..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 MY_PV="0.6.9-1"
 
 inherit meson distutils-r1 multilib-minimal flag-o-matic git-r3
@@ -12,33 +12,15 @@ DESCRIPTION="A Vulkan and OpenGL overlay for monitoring FPS, temperatures, CPU/G
 HOMEPAGE="https://github.com/flightlessmango/MangoHud"
 
 EGIT_REPO_URI="https://github.com/flightlessmango/MangoHud.git"
-if [[ ${PV} == "9999" ]]; then
-	SRC_URI="
-    	https://github.com/ocornut/imgui/archive/v1.81.tar.gz -> imgui-1.81.tar.gz
-    	https://wrapdb.mesonbuild.com/v1/projects/imgui/1.81/1/get_zip -> imgui_wrap-1.81.zip
-    	https://github.com/nlohmann/json/releases/download/v3.10.5/include.zip -> nlohmann_json-3.10.5.zip
-    	https://github.com/gabime/spdlog/archive/v1.8.5.tar.gz -> spdlog-1.8.5.tar.gz
-    	https://wrapdb.mesonbuild.com/v2/spdlog_1.8.5-1/get_patch -> spdlog-1.8.5-1-wrap.zip
-    	https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.2.158.tar.gz -> vulkan-headers-1.2.158.tar.gz
-    	https://wrapdb.mesonbuild.com/v2/vulkan-headers_1.2.158-2/get_patch -> vulkan-headers-1.2.158-2-wrap.zip
-	"
-else
-	SRC_URI="
-    	https://github.com/ocornut/imgui/archive/v1.81.tar.gz -> imgui-1.81.tar.gz
-    	https://wrapdb.mesonbuild.com/v1/projects/imgui/1.81/1/get_zip -> imgui_wrap-1.81.zip
-    	https://github.com/nlohmann/json/releases/download/v3.10.5/include.zip -> nlohmann_json-3.10.5.zip
-    	https://github.com/gabime/spdlog/archive/v1.8.5.tar.gz -> spdlog-1.8.5.tar.gz
-    	https://wrapdb.mesonbuild.com/v2/spdlog_1.8.5-1/get_patch -> spdlog-1.8.5-1-wrap.zip
-    	https://github.com/KhronosGroup/Vulkan-Headers/archive/v1.2.158.tar.gz -> vulkan-headers-1.2.158.tar.gz
-    	https://wrapdb.mesonbuild.com/v2/vulkan-headers_1.2.158-2/get_patch -> vulkan-headers-1.2.158-2-wrap.zip
-	"
-	EGIT_COMMIT="v${MY_PV}"
-	KEYWORDS="-* ~amd64 ~x86"
-fi
+EGIT_COMMIT="v${MY_PV}"
 
+RESTRICT="network-sandbox"
+
+KEYWORDS="-* ~amd64 ~x86"
 LICENSE="MIT"
 SLOT="0"
-IUSE="+dbus glvnd +X xnvctrl wayland -video_cards_nvidia +video_cards_amdgpu"
+
+IUSE="+dbus glvnd +X xnvctrl wayland -video_cards_nvidia +video_cards_amdgpu tools"
 REQUIRED_USE="
 	xnvctrl? ( video_cards_nvidia )
 "
@@ -49,7 +31,9 @@ BDEPEND="
 "
 DEPEND="
 	!games-util/mangohud
-	media-libs/glfw
+	tools? (
+		media-libs/glfw
+	)
 	dev-util/glslang
 	media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	video_cards_amdgpu? (
@@ -58,8 +42,12 @@ DEPEND="
 	glvnd? (
 		media-libs/libglvnd[${MULTILIB_USEDEP}]
 	)
-	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
-	X? ( x11-libs/libX11[${MULTILIB_USEDEP}] )
+	dbus? ( 
+		sys-apps/dbus[${MULTILIB_USEDEP}] 
+	)
+	X? ( 
+		x11-libs/libX11[${MULTILIB_USEDEP}] 
+	)
 	video_cards_nvidia? (
 		x11-drivers/nvidia-drivers[${MULTILIB_USEDEP}]
 		xnvctrl? ( x11-drivers/nvidia-drivers[static-libs] )
@@ -69,27 +57,24 @@ DEPEND="
 
 RDEPEND="${DEPEND}"
 
-src_unpack() {
-	git-r3_src_unpack
-	default
-
-	mv imgui-1.81 ${S}/subprojects
-	mv spdlog-1.8.5 ${S}/subprojects
-	mv Vulkan-Headers-1.2.158 ${S}/subprojects
-
-	mkdir ${S}/subprojects/nlohmann_json-3.10.5
-	mv {single_,}include LICENSE.MIT meson.build ${S}/subprojects/nlohmann_json-3.10.5
-}
 multilib_src_configure() {
 	local emesonargs=(
+		--wrap-mode default
 		-Dappend_libdir_mangohud=false
 		-Dinclude_doc=false
-		$(meson_feature video_cards_nvidia with_nvml)
-		$(meson_feature xnvctrl with_xnvctrl)
-		$(meson_feature X with_x11)
-		$(meson_feature wayland with_wayland)
-		$(meson_feature dbus with_dbus)
+		-Dwith_nvml=$(usex video_cards_nvidia enabled disabled)
+		-Dwith_xnvctrl=$(usex xnvctrl enabled disabled)
+		-Dwith_x11=$(usex X enabled disabled)
+		-Dwith_wayland=$(usex wayland enabled disabled)
+		-Dwith_dbus=$(usex dbus enabled disabled)
 	)
+	if multilib_is_native_abi; then
+		emesonargs+=(
+			-Dmangoapp=$(usex tools true false)
+			-Dmangohudctl=$(usex tools true false)
+			-Dmangoapp_layer=$(usex tools true false)
+		)
+	fi
 	meson_src_configure
 }
 
