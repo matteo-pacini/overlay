@@ -3,18 +3,15 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
-MY_PV="0.6.9-1"
+PYTHON_COMPAT=( python3_{9..12} )
 
-inherit meson distutils-r1 multilib-minimal flag-o-matic git-r3
+inherit meson distutils-r1 multilib-minimal flag-o-matic
 
 DESCRIPTION="A Vulkan and OpenGL overlay for monitoring FPS, temperatures, CPU/GPU load and more. AMDGPU testing branch"
 HOMEPAGE="https://github.com/flightlessmango/MangoHud"
 
-EGIT_REPO_URI="https://github.com/flightlessmango/MangoHud.git"
-EGIT_COMMIT="v${MY_PV}"
-
-RESTRICT="network-sandbox"
+SRC_URI="https://github.com/flightlessmango/MangoHud/releases/download/v${PV}-1/MangoHud-v${PV}-1-Source.tar.xz -> ${P}.tar.xz"
+S="${WORKDIR}"/MangoHud-v${PV}
 
 KEYWORDS="-* ~amd64 ~x86"
 LICENSE="MIT"
@@ -35,6 +32,7 @@ DEPEND="
 		media-libs/glfw
 	)
 	dev-util/glslang
+	>=dev-util/vulkan-headers-1.2
 	media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	video_cards_amdgpu? (
 		x11-libs/libdrm[video_cards_amdgpu]
@@ -59,7 +57,6 @@ RDEPEND="${DEPEND}"
 
 multilib_src_configure() {
 	local emesonargs=(
-		--wrap-mode default
 		-Dappend_libdir_mangohud=false
 		-Dinclude_doc=false
 		-Dwith_nvml=$(usex video_cards_nvidia enabled disabled)
