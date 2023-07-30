@@ -13,6 +13,11 @@ HOMEPAGE="https://github.com/flightlessmango/MangoHud"
 SRC_URI="https://github.com/flightlessmango/MangoHud/releases/download/v${PV}-1/MangoHud-v${PV}-1-Source.tar.xz -> ${P}.tar.xz"
 S="${WORKDIR}"/MangoHud-v${PV}
 
+PATCHES=(
+	# https://github.com/flightlessmango/MangoHud/issues/1084
+    "${FILESDIR}/0001-vulkan-manifest-set-cpu_family-in-layer-name.patch"
+)
+
 KEYWORDS="-* ~amd64 ~x86"
 LICENSE="MIT"
 SLOT="0"
@@ -29,7 +34,8 @@ BDEPEND="
 DEPEND="
 	!games-util/mangohud
 	tools? (
-		media-libs/glfw
+		>=media-libs/glfw-3.0.0
+		media-libs/glew
 	)
 	dev-util/glslang
 	>=dev-util/vulkan-headers-1.2
