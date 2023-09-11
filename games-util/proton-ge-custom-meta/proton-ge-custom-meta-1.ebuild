@@ -39,7 +39,7 @@ RDEPEND="
 
 	app-emulation/winetricks
 	virtual/wine[abi_x86_32]
-	app-emulation/proton-ge-custom-bin
+	games-util/proton-ge-custom-bin
 	games-util/steam-meta"
 
 pkg_pretend() {
