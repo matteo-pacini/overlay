@@ -3,8 +3,6 @@
 Welcome to the my personal Gentoo overlay! 🎉 This repository contains the following packages:
 
 * `app-misc/1password`: The popular password manager 1Password 😊
-* `games-util/mangohud`: A Vulkan and OpenGL overlay for monitoring FPS, temperatures, and more 🖥️
-* `games-util/proton-ge-custom-bin`: Proton-GE (GloriousEggroll) custom build for better compatibility with certain games on Steam 🎮
 
 Follow the instructions below to install the repository via `eselect-repository`.
 
