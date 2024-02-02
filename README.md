@@ -3,6 +3,7 @@
 Welcome to the my personal Gentoo overlay! 🎉 This repository contains the following packages:
 
 * `app-misc/1password`: The popular password manager 1Password 😊
+* `games-util/mangohud`: A Vulkan and OpenGL overlay for monitoring FPS, temperatures, CPU/GPU load and more.
 
 Follow the instructions below to install the repository via `eselect-repository`.
 
