@@ -18,8 +18,9 @@ fi
 
 LICENSE="MIT"
 SLOT="0/9999"
-IUSE="+pcinames"
+IUSE="+pcinames test"
 REQUIRED_USE=""
+RESTRICT="!test? ( test )"
 
 DEPEND="
 	dev-qt/qtcore:5
@@ -29,12 +30,15 @@ DEPEND="
 	dev-qt/qtwidgets:5
 	dev-qt/qtnetwork:5
 	dev-qt/qtsvg:5
-	dev-qt/linguist-tools:5[qml]
 	sys-auth/polkit
 	>=dev-libs/quazip-1.0
 	>=dev-libs/pugixml-1.11
 	>=dev-libs/spdlog-1.4
 	dev-libs/botan:3
+	test? (
+		>=dev-cpp/catch-3:0
+		>=dev-cpp/trompeloeil-40
+	)
 "
 RDEPEND="
 	${DEPEND}
@@ -43,9 +47,18 @@ RDEPEND="
 BDEPEND="
 	dev-build/cmake
 	virtual/pkgconfig
+	dev-qt/linguist-tools:5[qml]
 "
 
 PATCHES=(
 )
 
 S=${WORKDIR}/${PN}-v${PV}
+
+src_configure() {
+	local mycmakeargs=(
+		-DBUILD_TESTING=$(usex test)
+	)
+
+	cmake_src_configure
+}
